@@ -170,11 +170,24 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
     }
 
     internal inner class GestureToMultiTouchAdapter {
-        private val controller = MultiTouchController(hasRotationLock, hasCenterLock)
+        private val controller = MultiTouchController().apply {
+            if(hasCenterLock) {
+                pointDown(Integer.MIN_VALUE, PointF(0f, 0f))
+            }
+        }
+
         var isActive = false
 
-        val normMatrix
-            get() = controller.matrix
+        val normMatrix: Matrix
+            get() = controller.matrix.apply {
+                if(hasRotationLock) {
+                    val arr = FloatArray(9) {0f}
+                    this.getValues(arr)
+                    arr[1] = 0f
+                    arr[3] = 0f
+                    this.setValues(arr)
+                }
+            }
 
         fun down(event: MotionEvent) {
             val index = event.actionIndex

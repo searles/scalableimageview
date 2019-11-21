@@ -10,7 +10,7 @@ import kotlin.math.abs
  * This multitouch-controller allows to create a scale-event from
  * multiple gestures.
  */
-class MultiTouchController(private val hasRotationLock: Boolean, private val hasCenterLock: Boolean) {
+class MultiTouchController {
     /**
      * Matrix contains index -> moved from, to-pairs since last change.
      */
@@ -42,9 +42,6 @@ class MultiTouchController(private val hasRotationLock: Boolean, private val has
         get() = currentMatrix.apply {
             preConcat(gestureMatrix)
         }
-
-    val isDone: Boolean
-        get() = points.isEmpty()
 
     private fun createMatrixFromGesture(pq0: Pair<PointF, PointF>, pq1: Pair<PointF, PointF>, pq2: Pair<PointF, PointF>): Matrix {
         // Get the matrix
@@ -95,16 +92,6 @@ class MultiTouchController(private val hasRotationLock: Boolean, private val has
         val d = detD / det
         var ty = detTy / det
 
-        if(hasRotationLock) {
-            b = 0f
-            c = 0f
-        }
-
-        if(hasCenterLock) {
-            tx = 0f
-            ty = 0f
-        }
-
         return Matrix().apply {
             setValues(floatArrayOf(
                 a, b, tx,
@@ -138,36 +125,12 @@ class MultiTouchController(private val hasRotationLock: Boolean, private val has
         var tx = q0x - r * p0x - s * p0y
         var ty = q0y - r * p0y + s * p0x
 
-        if(hasRotationLock) {
-            if (abs(r) > abs(s)) {
-                s = 0f
-            } else {
-                r = 0f
-            }
-        }
-
-        if(hasCenterLock) {
-            tx = 0f
-            ty = 0f
-        }
-
         return Matrix().apply {
             setValues(floatArrayOf(r, s, tx, -s, r, ty, 0f, 0f, 1f))
         }
     }
 
     private fun createMatrixFromGesture(pq: Pair<PointF, PointF>): Matrix {
-        // Get the matrix m
-        // ( 1 0 tx )
-        // ( 0 1 ty )
-        // ( 0 0  1 )
-        // such that
-        // m * p = q
-
-        if(hasCenterLock) {
-            return createMatrixFromGesture(pq, Pair(PointF(0f, 0f), PointF(0f, 0f)))
-        }
-
         val tx = pq.second.x - pq.first.x
         val ty = pq.second.y - pq.first.y
 
