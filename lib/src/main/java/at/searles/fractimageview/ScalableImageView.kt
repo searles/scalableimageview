@@ -1,0 +1,216 @@
+package at.searles.fractimageview
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.*
+import android.util.AttributeSet
+import android.view.GestureDetector
+import android.view.GestureDetector.SimpleOnGestureListener
+import android.view.MotionEvent
+import android.view.View
+import at.searles.fractimageview.ScaleableBitmapViewUtils.norm
+
+open class ScalableImageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+    var hasRotationLock = false
+        set(value) {
+            cancelMultitouchGesture()
+            field = value
+        }
+
+    var hasCenterLock = false
+        set(value) {
+            cancelMultitouchGesture()
+            field = value
+        }
+
+    var mustConfirmZoom = false
+        set(value) {
+            cancelMultitouchGesture()
+            field = value
+        }
+
+    var isTouchEnabled = true
+        set(value) {
+            cancelMultitouchGesture()
+            field = value
+        }
+
+    /* Gesture control:
+     * - scroll events are forwarded to a multitouch controller
+     * - double tabs are zooms at the current position.
+     */
+
+    /**
+     * To detect gestures (3 finger drag etc...)
+     */
+    private val detector = GestureDetector(context, ScaleGestureListener())
+
+    /**
+     * Adapter to convert gestures to input for the multitouch controller
+     */
+    private var multitouchAdapter: GestureToMultiTouchAdapter? = null
+
+    lateinit var bitmapProvider: BitmapProvider
+
+    private val identityMatrix = Matrix()
+
+    val scaleNormMatrix: Matrix
+        get() = multitouchAdapter?.normMatrix ?: identityMatrix
+
+    override fun onDraw(canvas: Canvas) {
+        val scaleMatrix = multitouchAdapter?.normMatrix ?: identityMatrix
+
+        val matrix = ScaleableBitmapViewUtils.bitmapInViewMatrix(
+            bitmapProvider.width.toFloat(), bitmapProvider.height.toFloat(),
+            width.toFloat(), height.toFloat(),
+            bitmapProvider.normMatrix, scaleMatrix
+        )
+
+        // draw image
+        canvas.drawBitmap(bitmapProvider.bitmap, matrix, null)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (!isTouchEnabled) {
+            return false
+        }
+
+        when (event.actionMasked) {
+            MotionEvent.ACTION_CANCEL -> {
+                if(cancelMultitouchGesture()) {
+                    return true
+                }
+            }
+            MotionEvent.ACTION_DOWN -> {
+                if(multitouchAdapter == null) {
+                    multitouchAdapter = GestureToMultiTouchAdapter()
+                }
+
+                multitouchAdapter?.apply {
+                    down(event)
+                }
+            }
+            MotionEvent.ACTION_UP -> {
+                multitouchAdapter?.run{
+                    up(event)
+                    if(isActive) {
+                        if(!mustConfirmZoom) commitMultitouchGesture()
+                    }
+                }
+            }
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                multitouchAdapter?.down(event)
+            }
+            MotionEvent.ACTION_POINTER_UP -> {
+                multitouchAdapter?.up(event)
+            }
+        }
+
+        return detector.onTouchEvent(event) || super.onTouchEvent(event)
+    }
+
+    fun cancelMultitouchGesture(): Boolean {
+        if(multitouchAdapter != null) {
+            multitouchAdapter = null
+            invalidate()
+            return true
+        }
+
+        return false
+    }
+
+    private fun commitMultitouchGesture() {
+        bitmapProvider.scale(multitouchAdapter!!.normMatrix)
+        multitouchAdapter = null
+        invalidate()
+    }
+
+    internal inner class ScaleGestureListener: SimpleOnGestureListener() {
+        override fun onDown(motionEvent: MotionEvent): Boolean { // must be true, otherwise no touch events.
+            return true
+        }
+
+        override fun onDoubleTap(event: MotionEvent): Boolean {
+            if (mustConfirmZoom && multitouchAdapter != null && multitouchAdapter!!.isActive) { // not active when 'confirm zoom' is set.
+                return false
+            }
+
+            if (multitouchAdapter != null) {
+                cancelMultitouchGesture()
+            }
+
+            val index = event.actionIndex
+            val p = PointF(event.getX(index), event.getY(index))
+            val np = norm(p, bitmapProvider.width.toFloat(), bitmapProvider.height.toFloat(), width.toFloat(), height.toFloat())
+
+            bitmapProvider.scale(ScaleableBitmapViewUtils.scaleMatrix(np, dtScaleFactor))
+
+            return true
+        }
+
+        override fun onSingleTapUp(motionEvent: MotionEvent): Boolean {
+            if (mustConfirmZoom && multitouchAdapter?.isActive == true) {
+                commitMultitouchGesture()
+                return true
+            } else {
+                cancelMultitouchGesture()
+                return false
+            }
+        }
+
+        override fun onScroll(startEvt: MotionEvent?, currentEvt: MotionEvent, vx: Float, vy: Float): Boolean {
+            if(multitouchAdapter != null) {
+                multitouchAdapter!!.scroll(currentEvt)
+                return true
+            }
+
+            return false
+        }
+    }
+
+    internal inner class GestureToMultiTouchAdapter {
+        private val controller = MultiTouchController(hasRotationLock, hasCenterLock)
+        var isActive = false
+
+        val normMatrix
+            get() = controller.matrix
+
+        fun down(event: MotionEvent) {
+            val index = event.actionIndex
+            val id = event.getPointerId(index)
+            val pt = norm(PointF(event.getX(index), event.getY(index)), bitmapProvider.width.toFloat(), bitmapProvider.height.toFloat(), width.toFloat(), height.toFloat())
+
+            controller.pointDown(id, pt)
+        }
+
+        fun up(event: MotionEvent) {
+            val index = event.actionIndex
+            val id = event.getPointerId(index)
+            controller.pointUp(id)
+        }
+
+        fun scroll(event: MotionEvent) {
+            isActive = true
+            for (index in 0 until event.pointerCount) {
+                val pt = norm(PointF(event.getX(index), event.getY(index)), bitmapProvider.width.toFloat(), bitmapProvider.height.toFloat(), width.toFloat(), height.toFloat())
+                val id = event.getPointerId(index)
+                controller.pointDrag(id, pt)
+            }
+
+            invalidate()
+        }
+    }
+
+    interface Plugin {
+        fun onDraw(source: ScalableImageView, canvas: Canvas)
+        fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean
+    }
+
+    companion object {
+        /**
+         * Scale factor on double tapping
+         */
+        const val dtScaleFactor = 3f
+    }
+}
