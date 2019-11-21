@@ -22,12 +22,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<CheckBox>(R.id.rotationLockCheckBox)
     }
 
-    private val centerLockCheckBox: CheckBox by lazy {
-        findViewById<CheckBox>(R.id.centerLockCheckBox)
-    }
-
     private val confirmZoomCheckBox: CheckBox by lazy {
         findViewById<CheckBox>(R.id.confirmZoomCheckBox)
+    }
+
+    private val isTouchEnabledCheckBox: CheckBox by lazy {
+        findViewById<CheckBox>(R.id.isTouchEnabledCheckBox)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,12 +40,12 @@ class MainActivity : AppCompatActivity() {
         scalableImageView.addPlugin(DemoPlugin(textView))
 
         confirmZoomCheckBox.setOnClickListener { scalableImageView.mustConfirmZoom = confirmZoomCheckBox.isChecked }
-        centerLockCheckBox.setOnClickListener { scalableImageView.hasCenterLock = centerLockCheckBox.isChecked }
         rotationLockCheckBox.setOnClickListener { scalableImageView.hasRotationLock = rotationLockCheckBox.isChecked }
+        isTouchEnabledCheckBox.setOnClickListener { scalableImageView.isTouchEnabled = isTouchEnabledCheckBox.isChecked }
 
         scalableImageView.mustConfirmZoom = confirmZoomCheckBox.isChecked
         scalableImageView.hasRotationLock = rotationLockCheckBox.isChecked
-        scalableImageView.hasCenterLock = centerLockCheckBox.isChecked
+        scalableImageView.isTouchEnabled = isTouchEnabledCheckBox.isChecked
     }
 
     override fun onBackPressed() {

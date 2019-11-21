@@ -17,12 +17,6 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
             field = value
         }
 
-    var hasCenterLock = false
-        set(value) {
-            cancelMultitouchGesture()
-            field = value
-        }
-
     var mustConfirmZoom = false
         set(value) {
             cancelMultitouchGesture()
@@ -170,11 +164,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
     }
 
     internal inner class GestureToMultiTouchAdapter {
-        private val controller = MultiTouchController().apply {
-            if(hasCenterLock) {
-                pointDown(Integer.MIN_VALUE, PointF(0f, 0f))
-            }
-        }
+        private val controller = MultiTouchController()
 
         var isActive = false
 
