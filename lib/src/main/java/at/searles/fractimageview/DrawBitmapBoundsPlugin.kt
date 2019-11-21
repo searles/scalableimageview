@@ -14,8 +14,8 @@ class DrawBitmapBoundsPlugin: ScalableImageView.Plugin {
 
         val cx = vw / 2f
         val cy = vh / 2f
-        val sbw = ScaleableBitmapViewUtils.scaledBitmapWidth(bw, bh, vw, vh)
-        val sbh = ScaleableBitmapViewUtils.scaledBitmapHeight(bw, bh, vw, vh)
+        val sbw = ScalableBitmapViewUtils.scaledBitmapWidth(bw, bh, vw, vh)
+        val sbh = ScalableBitmapViewUtils.scaledBitmapHeight(bw, bh, vw, vh)
 
         // draw in total 4 transparent rectangles to indicate the drawing area
         canvas.drawRect(-1f, -1f, vw, cy - sbh / 2f, boundsPaint) // top

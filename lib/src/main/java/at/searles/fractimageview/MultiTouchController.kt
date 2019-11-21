@@ -4,7 +4,6 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.util.Pair
 import java.util.*
-import kotlin.math.abs
 
 /**
  * This multitouch-controller allows to create a scale-event from
@@ -86,11 +85,11 @@ class MultiTouchController {
                 (p0x * p2y * q1y + p1x * p0y * q2y + p2x * p1y * q0y)
 
         val a = detA / det
-        var b = detB / det
-        var tx = detTx / det
-        var c = detC / det
+        val b = detB / det
+        val tx = detTx / det
+        val c = detC / det
         val d = detD / det
-        var ty = detTy / det
+        val ty = detTy / det
 
         return Matrix().apply {
             setValues(floatArrayOf(
@@ -119,11 +118,11 @@ class MultiTouchController {
         val detR = dqx * -dpx - dqy * dpy
         val detS = dpx * dqy - dpy * dqx
 
-        var r = detR / det
-        var s = detS / det
+        val r = detR / det
+        val s = detS / det
 
-        var tx = q0x - r * p0x - s * p0y
-        var ty = q0y - r * p0y + s * p0x
+        val tx = q0x - r * p0x - s * p0y
+        val ty = q0y - r * p0y + s * p0x
 
         return Matrix().apply {
             setValues(floatArrayOf(r, s, tx, -s, r, ty, 0f, 0f, 1f))
@@ -177,12 +176,4 @@ class MultiTouchController {
         require(points.remove(pointerId) != null) { "remove returned null" }
     }
 
-    interface Observer {
-        fun onUpdate(m: Matrix)
-        fun onFinished(m: Matrix)
-    }
-
-    interface Controller {
-        val hasRotationLock: Boolean
-    }
 }

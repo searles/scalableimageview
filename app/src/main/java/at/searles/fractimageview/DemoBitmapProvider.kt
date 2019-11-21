@@ -9,7 +9,7 @@ class DemoBitmapProvider: BitmapProvider() {
 
     override var bitmap: Bitmap =
         Bitmap.createBitmap(50, 10, Bitmap.Config.ARGB_8888).apply {
-            eraseColor(android.graphics.Color.GREEN);
+            eraseColor(android.graphics.Color.GREEN)
         }
 
     override val normMatrix: Matrix

@@ -6,7 +6,7 @@ import android.graphics.RectF
 import kotlin.math.max
 import kotlin.math.min
 
-object ScaleableBitmapViewUtils {
+object ScalableBitmapViewUtils {
     fun bitmapToViewMatrix(bw: Float, bh: Float, vw: Float, vh: Float, ret: Matrix = Matrix()): Matrix {
         require(bw > 0 && bh > 0 && vw > 0 && vh > 0)
 
@@ -41,7 +41,7 @@ object ScaleableBitmapViewUtils {
      * Inverse of bitmap2norm
      */
     fun normToBitmapMatrix(width: Float, height: Float, ret: Matrix = Matrix()): Matrix {
-        val m = Math.min(width, height)
+        val m = min(width, height)
         return ret.apply {
             setValues(floatArrayOf(
                 m / 2f, 0f, width / 2f,
@@ -53,7 +53,7 @@ object ScaleableBitmapViewUtils {
 
     /**
      * Matrices to convert coordinates into value that is
-     * independent from the bitmap-size. Normized always
+     * independent from the bitmap-size. Normalized always
      * contains the square -1,-1 - 1-1 with 0,0 in the middle
      * but also keeps the ratio of the image.
      */
@@ -80,7 +80,7 @@ object ScaleableBitmapViewUtils {
             val ratio = min(vw / bh, vh / bw)
             bh * ratio
         } else {
-            val ratio = Math.min(vw / bw, vh / bh)
+            val ratio = min(vw / bw, vh / bh)
             bw * ratio
         }
     }
@@ -94,7 +94,7 @@ object ScaleableBitmapViewUtils {
             val ratio = min(vw / bh, vh / bw)
             bw * ratio
         } else {
-            val ratio = Math.min(vw / bw, vh / bh)
+            val ratio = min(vw / bw, vh / bh)
             bh * ratio
         }
     }

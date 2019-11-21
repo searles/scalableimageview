@@ -4,7 +4,7 @@ import android.graphics.*
 import android.view.MotionEvent
 import android.widget.TextView
 
-class DemoPlugin(val tv: TextView): ScalableImageView.Plugin {
+class DemoPlugin(private val tv: TextView): ScalableImageView.Plugin {
 
     private val paint = Paint().apply {
         strokeWidth = 4f
@@ -40,8 +40,8 @@ class DemoPlugin(val tv: TextView): ScalableImageView.Plugin {
         val bh = scalableImageView.bitmapProvider.height.toFloat()
 
         val matrix = Matrix(scalableImageView.scaleNormMatrix)
-        matrix.postConcat(ScaleableBitmapViewUtils.normToBitmapMatrix(bw, bh))
-        matrix.postConcat(ScaleableBitmapViewUtils.bitmapToViewMatrix(bw, bh, vw, vh))
+        matrix.postConcat(ScalableBitmapViewUtils.normToBitmapMatrix(bw, bh))
+        matrix.postConcat(ScalableBitmapViewUtils.bitmapToViewMatrix(bw, bh, vw, vh))
 
         return matrix
     }

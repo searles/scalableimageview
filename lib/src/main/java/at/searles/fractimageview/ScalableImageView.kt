@@ -8,7 +8,7 @@ import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.View
-import at.searles.fractimageview.ScaleableBitmapViewUtils.norm
+import at.searles.fractimageview.ScalableBitmapViewUtils.norm
 
 open class ScalableImageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     var hasRotationLock = false
@@ -60,7 +60,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
     override fun onDraw(canvas: Canvas) {
         val scaleMatrix = multitouchAdapter?.normMatrix ?: identityMatrix
 
-        val matrix = ScaleableBitmapViewUtils.bitmapInViewMatrix(
+        val matrix = ScalableBitmapViewUtils.bitmapInViewMatrix(
             bitmapProvider.width.toFloat(), bitmapProvider.height.toFloat(),
             width.toFloat(), height.toFloat(),
             bitmapProvider.normMatrix, scaleMatrix
@@ -144,18 +144,18 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
             val p = PointF(event.getX(index), event.getY(index))
             val np = norm(p, bitmapProvider.width.toFloat(), bitmapProvider.height.toFloat(), width.toFloat(), height.toFloat())
 
-            bitmapProvider.scale(ScaleableBitmapViewUtils.scaleMatrix(np, dtScaleFactor))
+            bitmapProvider.scale(ScalableBitmapViewUtils.scaleMatrix(np, dtScaleFactor))
 
             return true
         }
 
         override fun onSingleTapUp(motionEvent: MotionEvent): Boolean {
-            if (mustConfirmZoom && multitouchAdapter?.isActive == true) {
+            return if (mustConfirmZoom && multitouchAdapter?.isActive == true) {
                 commitMultitouchGesture()
-                return true
+                true
             } else {
                 cancelMultitouchGesture()
-                return false
+                false
             }
         }
 

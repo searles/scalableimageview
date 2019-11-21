@@ -10,23 +10,23 @@ import android.widget.TextView
  */
 class MainActivity : AppCompatActivity() {
 
-    val scalableImageView: PluginScalableImageView by lazy {
+    private val scalableImageView: PluginScalableImageView by lazy {
         findViewById<PluginScalableImageView>(R.id.scalableImageView)
     }
 
-    val textView: TextView by lazy {
+    private val textView: TextView by lazy {
         findViewById<TextView>(R.id.textView)
     }
 
-    val rotationLockCheckBox: CheckBox by lazy {
+    private val rotationLockCheckBox: CheckBox by lazy {
         findViewById<CheckBox>(R.id.rotationLockCheckBox)
     }
 
-    val centerLockCheckBox: CheckBox by lazy {
+    private val centerLockCheckBox: CheckBox by lazy {
         findViewById<CheckBox>(R.id.centerLockCheckBox)
     }
 
-    val confirmZoomCheckBox: CheckBox by lazy {
+    private val confirmZoomCheckBox: CheckBox by lazy {
         findViewById<CheckBox>(R.id.confirmZoomCheckBox)
     }
 
