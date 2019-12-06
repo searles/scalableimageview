@@ -36,8 +36,8 @@ class DemoPlugin(private val tv: TextView): ScalableImageView.Plugin {
     private fun normToViewMatrix(scalableImageView: ScalableImageView): Matrix {
         val vw = scalableImageView.width.toFloat()
         val vh = scalableImageView.height.toFloat()
-        val bw = scalableImageView.bitmapProvider.width.toFloat()
-        val bh = scalableImageView.bitmapProvider.height.toFloat()
+        val bw = scalableImageView.scalableBitmapModel.width.toFloat()
+        val bh = scalableImageView.scalableBitmapModel.height.toFloat()
 
         val matrix = Matrix(scalableImageView.scaleNormMatrix)
         matrix.postConcat(ScalableBitmapViewUtils.normToBitmapMatrix(bw, bh))

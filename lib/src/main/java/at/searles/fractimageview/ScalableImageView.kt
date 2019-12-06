@@ -44,7 +44,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
      */
     private var multitouchAdapter: GestureToMultiTouchAdapter? = null
 
-    lateinit var bitmapProvider: BitmapProvider
+    lateinit var scalableBitmapModel: ScalableBitmapModel
 
     private val identityMatrix = Matrix()
 
@@ -55,13 +55,13 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
         val scaleMatrix = multitouchAdapter?.normMatrix ?: identityMatrix
 
         val matrix = ScalableBitmapViewUtils.bitmapInViewMatrix(
-            bitmapProvider.width.toFloat(), bitmapProvider.height.toFloat(),
+            scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(),
             width.toFloat(), height.toFloat(),
-            bitmapProvider.normMatrix, scaleMatrix
+            scalableBitmapModel.normMatrix, scaleMatrix
         )
 
         // draw image
-        canvas.drawBitmap(bitmapProvider.bitmap, matrix, null)
+        canvas.drawBitmap(scalableBitmapModel.bitmap, matrix, null)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -115,7 +115,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
     }
 
     private fun commitMultitouchGesture() {
-        bitmapProvider.scale(multitouchAdapter!!.normMatrix)
+        scalableBitmapModel.scale(multitouchAdapter!!.normMatrix)
         multitouchAdapter = null
         invalidate()
     }
@@ -136,9 +136,9 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
 
             val index = event.actionIndex
             val p = PointF(event.getX(index), event.getY(index))
-            val np = norm(p, bitmapProvider.width.toFloat(), bitmapProvider.height.toFloat(), width.toFloat(), height.toFloat())
+            val np = norm(p, scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(), width.toFloat(), height.toFloat())
 
-            bitmapProvider.scale(ScalableBitmapViewUtils.scaleMatrix(np, dtScaleFactor))
+            scalableBitmapModel.scale(ScalableBitmapViewUtils.scaleMatrix(np, dtScaleFactor))
 
             return true
         }
@@ -182,7 +182,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
         fun down(event: MotionEvent) {
             val index = event.actionIndex
             val id = event.getPointerId(index)
-            val pt = norm(PointF(event.getX(index), event.getY(index)), bitmapProvider.width.toFloat(), bitmapProvider.height.toFloat(), width.toFloat(), height.toFloat())
+            val pt = norm(PointF(event.getX(index), event.getY(index)), scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(), width.toFloat(), height.toFloat())
 
             controller.pointDown(id, pt)
         }
@@ -196,7 +196,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
         fun scroll(event: MotionEvent) {
             isActive = true
             for (index in 0 until event.pointerCount) {
-                val pt = norm(PointF(event.getX(index), event.getY(index)), bitmapProvider.width.toFloat(), bitmapProvider.height.toFloat(), width.toFloat(), height.toFloat())
+                val pt = norm(PointF(event.getX(index), event.getY(index)), scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(), width.toFloat(), height.toFloat())
                 val id = event.getPointerId(index)
                 controller.pointDrag(id, pt)
             }

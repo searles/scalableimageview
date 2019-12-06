@@ -9,8 +9,8 @@ class DrawBitmapBoundsPlugin: ScalableImageView.Plugin {
         val vw = source.width.toFloat()
         val vh = source.height.toFloat()
 
-        val bw = source.bitmapProvider.width.toFloat()
-        val bh = source.bitmapProvider.height.toFloat()
+        val bw = source.scalableBitmapModel.width.toFloat()
+        val bh = source.scalableBitmapModel.height.toFloat()
 
         val cx = vw / 2f
         val cy = vh / 2f

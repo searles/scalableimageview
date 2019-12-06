@@ -3,7 +3,7 @@ package at.searles.fractimageview
 import android.graphics.Bitmap
 import android.graphics.Matrix
 
-class DemoBitmapProvider: BitmapProvider() {
+class DemoBitmapProvider: ScalableBitmapModel() {
 
     private val scaleMatrix = Matrix()
 

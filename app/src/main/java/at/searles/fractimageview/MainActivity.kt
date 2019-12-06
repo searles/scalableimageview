@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        scalableImageView.bitmapProvider = DemoBitmapProvider()
+        scalableImageView.scalableBitmapModel = DemoBitmapProvider()
 
         scalableImageView.addPlugin(DrawBitmapBoundsPlugin())
         scalableImageView.addPlugin(DemoPlugin(textView))

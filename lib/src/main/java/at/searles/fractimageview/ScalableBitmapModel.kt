@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import kotlin.math.min
 
-abstract class BitmapProvider {
+abstract class ScalableBitmapModel {
 
     val width
         get() = bitmap.width
