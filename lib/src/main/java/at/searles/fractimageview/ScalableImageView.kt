@@ -57,7 +57,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
         val matrix = ScalableBitmapViewUtils.bitmapInViewMatrix(
             scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(),
             width.toFloat(), height.toFloat(),
-            scalableBitmapModel.normMatrix, scaleMatrix
+            scalableBitmapModel.bitmapTransformMatrix, scaleMatrix
         )
 
         // draw image

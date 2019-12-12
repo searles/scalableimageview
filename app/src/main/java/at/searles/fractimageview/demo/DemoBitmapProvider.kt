@@ -1,7 +1,8 @@
-package at.searles.fractimageview
+package at.searles.fractimageview.demo
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import at.searles.fractimageview.ScalableBitmapModel
 
 class DemoBitmapProvider: ScalableBitmapModel() {
 
@@ -12,10 +13,10 @@ class DemoBitmapProvider: ScalableBitmapModel() {
             eraseColor(android.graphics.Color.GREEN)
         }
 
-    override val normMatrix: Matrix
+    override val bitmapTransformMatrix: Matrix
         get() = scaleMatrix
 
-    override fun scale(normMatrix: Matrix) {
-        scaleMatrix.postConcat(normMatrix)
+    override fun scale(relativeMatrix: Matrix) {
+        scaleMatrix.postConcat(relativeMatrix)
     }
 }

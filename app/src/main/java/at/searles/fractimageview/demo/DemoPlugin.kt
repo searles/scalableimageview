@@ -1,10 +1,13 @@
-package at.searles.fractimageview
+package at.searles.fractimageview.demo
 
 import android.graphics.*
 import android.view.MotionEvent
 import android.widget.TextView
+import at.searles.fractimageview.ScalableBitmapViewUtils
+import at.searles.fractimageview.ScalableImageView
 
-class DemoPlugin(private val tv: TextView): ScalableImageView.Plugin {
+class DemoPlugin(private val tv: TextView):
+    ScalableImageView.Plugin {
 
     private val paint = Paint().apply {
         strokeWidth = 4f
@@ -40,8 +43,20 @@ class DemoPlugin(private val tv: TextView): ScalableImageView.Plugin {
         val bh = scalableImageView.scalableBitmapModel.height.toFloat()
 
         val matrix = Matrix(scalableImageView.scaleNormMatrix)
-        matrix.postConcat(ScalableBitmapViewUtils.normToBitmapMatrix(bw, bh))
-        matrix.postConcat(ScalableBitmapViewUtils.bitmapToViewMatrix(bw, bh, vw, vh))
+        matrix.postConcat(
+            ScalableBitmapViewUtils.normToBitmapMatrix(
+                bw,
+                bh
+            )
+        )
+        matrix.postConcat(
+            ScalableBitmapViewUtils.bitmapToViewMatrix(
+                bw,
+                bh,
+                vw,
+                vh
+            )
+        )
 
         return matrix
     }
