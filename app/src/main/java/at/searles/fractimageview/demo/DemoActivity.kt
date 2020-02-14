@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.CheckBox
 import android.widget.TextView
 import at.searles.fractimageview.DrawBitmapBoundsPlugin
+import at.searles.fractimageview.GridPlugin
 import at.searles.fractimageview.PluginScalableImageView
 
 /**
@@ -39,6 +40,7 @@ class DemoActivity : AppCompatActivity() {
         scalableImageView.scalableBitmapModel = DemoBitmapProvider()
 
         scalableImageView.addPlugin(DrawBitmapBoundsPlugin())
+        scalableImageView.addPlugin(GridPlugin(this))
         scalableImageView.addPlugin(DemoPlugin(textView))
 
         confirmZoomCheckBox.setOnClickListener { scalableImageView.mustConfirmZoom = confirmZoomCheckBox.isChecked }
