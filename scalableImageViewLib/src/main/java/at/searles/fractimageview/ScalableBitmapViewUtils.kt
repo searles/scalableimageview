@@ -99,7 +99,6 @@ object ScalableBitmapViewUtils {
         }
     }
 
-
     /**
      * Normalize view coordinates using the provided bitmap coordinates. This one
      * takes care of isBitmapFlipped etc...
@@ -116,6 +115,30 @@ object ScalableBitmapViewUtils {
         } else {
             x = (p.x * 2f - vw) / m
             y = (p.y * 2f - vh) / m
+        }
+
+        return ret.apply {
+            this.x = x
+            this.y = y
+        }
+    }
+
+    /**
+     * Normalize view coordinates using the provided bitmap coordinates. This one
+     * takes care of isBitmapFlipped etc...
+     */
+    fun invNorm(p: PointF, bw: Float, bh: Float, vw: Float, vh: Float, ret: PointF = PointF()): PointF {
+        val m = min(scaledBitmapWidth(bw, bh, vw, vh), scaledBitmapHeight(bw, bh, vw, vh))
+
+        val x: Float
+        val y: Float
+
+        if(isBitmapFlipped(bw, bh, vw, vh)) {
+            x = (p.y * m + vh) / 2f
+            y = (-p.x * m + vw) / 2f
+        } else {
+            x = (p.x * m + vw) / 2f
+            y = (p.y * m + vh) / 2f
         }
 
         return ret.apply {
