@@ -134,8 +134,8 @@ object ScalableBitmapViewUtils {
         val y: Float
 
         if(isBitmapFlipped(bw, bh, vw, vh)) {
-            x = (p.y * m + vh) / 2f
-            y = (-p.x * m + vw) / 2f
+            y = (p.x * m + vh) / 2f
+            x = (vw - p.y * m) / 2f
         } else {
             x = (p.x * m + vw) / 2f
             y = (p.y * m + vh) / 2f
