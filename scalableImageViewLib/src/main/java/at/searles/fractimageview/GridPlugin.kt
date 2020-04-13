@@ -46,10 +46,6 @@ class GridPlugin(context: Context): ScalableImageView.Plugin {
             canvas.drawLine(cx - minLen / 2f, 0f, cx - minLen / 2f, vh, gridPaint)
             canvas.drawLine(cx + minLen / 2f, 0f, cx + minLen / 2f, vh, gridPaint)
         }
-
-        if(ScalableBitmapViewUtils.isBitmapFlipped(bw, bh, vw, vh)) {
-            // TODO: Draw symbol if image is rotated
-        }
     }
 
     override fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean = false
@@ -98,5 +94,6 @@ class GridPlugin(context: Context): ScalableImageView.Plugin {
 
     companion object {
         private const val widthDp = 1f
+        private const val flippedIconSizeDp = 24f
     }
 }

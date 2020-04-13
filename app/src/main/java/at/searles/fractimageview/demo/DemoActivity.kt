@@ -6,6 +6,7 @@ import android.widget.CheckBox
 import android.widget.TextView
 import at.searles.fractimageview.DrawBitmapBoundsPlugin
 import at.searles.fractimageview.GridPlugin
+import at.searles.fractimageview.IconIfFlippedPlugin
 import at.searles.fractimageview.PluginScalableImageView
 
 /**
@@ -42,6 +43,7 @@ class DemoActivity : AppCompatActivity() {
         scalableImageView.addPlugin(DrawBitmapBoundsPlugin())
         scalableImageView.addPlugin(GridPlugin(this))
         scalableImageView.addPlugin(DemoPlugin(textView))
+        scalableImageView.addPlugin(IconIfFlippedPlugin(this))
 
         confirmZoomCheckBox.setOnClickListener { scalableImageView.mustConfirmZoom = confirmZoomCheckBox.isChecked }
         rotationLockCheckBox.setOnClickListener { scalableImageView.hasRotationLock = rotationLockCheckBox.isChecked }
