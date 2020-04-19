@@ -13,18 +13,16 @@ class PluginScalableImageView(context: Context, attrs: AttributeSet) : ScalableI
         super.onDraw(canvas)
 
         plugins.forEach {
-            it.onDraw(this, canvas)
+            if(it.isEnabled) {
+                it.onDraw(this, canvas)
+            }
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if(!isTouchEnabled) {
-            return false
-        }
-
         plugins.forEach {
-            if (it.onTouchEvent(this, event)) return true
+            if (it.isEnabled && it.onTouchEvent(this, event)) return true
         }
 
         return super.onTouchEvent(event)
@@ -32,9 +30,5 @@ class PluginScalableImageView(context: Context, attrs: AttributeSet) : ScalableI
 
     fun addPlugin(plugin: Plugin) {
         this.plugins.add(0, plugin)
-    }
-
-    fun removePlugin(plugin: Plugin) {
-        this.plugins.remove(plugin)
     }
 }

@@ -1,13 +1,18 @@
-package at.searles.fractimageview
+package at.searles.fractimageview.plugins
 
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.util.TypedValue
 import android.view.MotionEvent
+import at.searles.fractimageview.Plugin
+import at.searles.fractimageview.R
+import at.searles.fractimageview.ScalableBitmapViewUtils
+import at.searles.fractimageview.ScalableImageView
 
+class IconIfFlippedPlugin(context: Context): Plugin {
 
-class IconIfFlippedPlugin(context: Context): ScalableImageView.Plugin {
+    override var isEnabled: Boolean = true
 
     private val icon = context.resources.getDrawable(R.drawable.flipped_icon, null)
     private val iconSize = dpToPx(iconSizeDp, context.resources)
@@ -39,6 +44,5 @@ class IconIfFlippedPlugin(context: Context): ScalableImageView.Plugin {
 
     companion object {
         private const val iconSizeDp = 24f
-        private const val paddingDp = 2f
     }
 }

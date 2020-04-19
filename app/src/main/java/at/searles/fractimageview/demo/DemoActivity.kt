@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import at.searles.fractimageview.DrawBitmapBoundsPlugin
-import at.searles.fractimageview.GridPlugin
-import at.searles.fractimageview.IconIfFlippedPlugin
+import at.searles.fractimageview.plugins.DrawBitmapBoundsPlugin
+import at.searles.fractimageview.plugins.GridPlugin
+import at.searles.fractimageview.plugins.IconIfFlippedPlugin
 import at.searles.fractimageview.PluginScalableImageView
+import at.searles.fractimageview.plugins.GestureBlockPlugin
 
 /**
  * This demo shows
@@ -41,17 +42,24 @@ class DemoActivity : AppCompatActivity() {
         scalableImageView.scalableBitmapModel = DemoBitmapProvider()
 
         scalableImageView.addPlugin(DrawBitmapBoundsPlugin())
-        scalableImageView.addPlugin(GridPlugin(this))
+        scalableImageView.addPlugin(
+            GridPlugin(
+                this
+            )
+        )
         scalableImageView.addPlugin(DemoPlugin(textView))
         scalableImageView.addPlugin(IconIfFlippedPlugin(this))
 
+        val touchBlocker = GestureBlockPlugin()
+
+        scalableImageView.addPlugin(touchBlocker)
+
         confirmZoomCheckBox.setOnClickListener { scalableImageView.mustConfirmZoom = confirmZoomCheckBox.isChecked }
         rotationLockCheckBox.setOnClickListener { scalableImageView.hasRotationLock = rotationLockCheckBox.isChecked }
-        isTouchEnabledCheckBox.setOnClickListener { scalableImageView.isTouchEnabled = isTouchEnabledCheckBox.isChecked }
+        isTouchEnabledCheckBox.setOnClickListener { touchBlocker.isEnabled = !isTouchEnabledCheckBox.isChecked }
 
         scalableImageView.mustConfirmZoom = confirmZoomCheckBox.isChecked
         scalableImageView.hasRotationLock = rotationLockCheckBox.isChecked
-        scalableImageView.isTouchEnabled = isTouchEnabledCheckBox.isChecked
     }
 
     override fun onBackPressed() {

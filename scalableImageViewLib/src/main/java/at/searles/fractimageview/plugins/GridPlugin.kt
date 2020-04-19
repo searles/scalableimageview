@@ -1,4 +1,4 @@
-package at.searles.fractimageview
+package at.searles.fractimageview.plugins
 
 import android.content.Context
 import android.content.res.Resources
@@ -7,9 +7,15 @@ import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.util.TypedValue
 import android.view.MotionEvent
+import at.searles.fractimageview.Plugin
+import at.searles.fractimageview.ScalableBitmapViewUtils
+import at.searles.fractimageview.ScalableImageView
 import kotlin.math.min
 
-class GridPlugin(context: Context): ScalableImageView.Plugin {
+class GridPlugin(context: Context): Plugin {
+
+    override var isEnabled: Boolean = true
+
     override fun onDraw(source: ScalableImageView, canvas: Canvas) {
         val vw = source.width.toFloat()
         val vh = source.height.toFloat()
@@ -18,8 +24,20 @@ class GridPlugin(context: Context): ScalableImageView.Plugin {
 
         val cx = vw / 2f
         val cy = vh / 2f
-        val sbw = ScalableBitmapViewUtils.scaledBitmapWidth(bw, bh, vw, vh)
-        val sbh = ScalableBitmapViewUtils.scaledBitmapHeight(bw, bh, vw, vh)
+        val sbw =
+            ScalableBitmapViewUtils.scaledBitmapWidth(
+                bw,
+                bh,
+                vw,
+                vh
+            )
+        val sbh =
+            ScalableBitmapViewUtils.scaledBitmapHeight(
+                bw,
+                bh,
+                vw,
+                vh
+            )
 
         val minLen = min(sbw, sbh) / 2f
 

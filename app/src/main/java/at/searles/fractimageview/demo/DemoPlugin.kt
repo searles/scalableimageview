@@ -6,16 +6,18 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.widget.TextView
+import at.searles.fractimageview.Plugin
 import at.searles.fractimageview.ScalableBitmapViewUtils
 import at.searles.fractimageview.ScalableImageView
 
 class DemoPlugin(private val tv: TextView):
-    ScalableImageView.Plugin {
+    Plugin {
 
     private val paint = Paint().apply {
         strokeWidth = 4f
         color = Color.BLACK
     }
+    override var isEnabled = true
 
     override fun onDraw(source: ScalableImageView, canvas: Canvas) {
         val corners = floatArrayOf(-1f, -1f, -1f, 1f, 1f, -1f)

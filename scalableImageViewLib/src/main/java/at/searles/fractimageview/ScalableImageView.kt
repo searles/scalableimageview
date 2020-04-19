@@ -25,12 +25,6 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
             field = value
         }
 
-    var isTouchEnabled = true
-        set(value) {
-            cancelMultitouchGesture()
-            field = value
-        }
-
     /* Gesture control:
      * - scroll events are forwarded to a multitouch controller
      * - double tabs are zooms at the current position.
@@ -68,10 +62,6 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (!isTouchEnabled) {
-            return false
-        }
-
         when (event.actionMasked) {
             MotionEvent.ACTION_CANCEL -> {
                 if(cancelMultitouchGesture()) {
@@ -197,11 +187,6 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
 
             invalidate()
         }
-    }
-
-    interface Plugin {
-        fun onDraw(source: ScalableImageView, canvas: Canvas)
-        fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean
     }
 
     companion object {
