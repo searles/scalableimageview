@@ -1,6 +1,5 @@
 package at.searles.fractimageview
 
-import android.R.attr.*
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas

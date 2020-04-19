@@ -1,9 +1,9 @@
 package at.searles.fractimageview.demo
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import at.searles.fractimageview.DrawBitmapBoundsPlugin
 import at.searles.fractimageview.GridPlugin
 import at.searles.fractimageview.IconIfFlippedPlugin

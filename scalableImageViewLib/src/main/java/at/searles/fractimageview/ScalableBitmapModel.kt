@@ -2,7 +2,6 @@ package at.searles.fractimageview
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import kotlin.math.min
 
 abstract class ScalableBitmapModel {
 

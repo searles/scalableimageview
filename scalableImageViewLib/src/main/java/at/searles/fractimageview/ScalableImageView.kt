@@ -2,7 +2,9 @@ package at.searles.fractimageview
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
@@ -164,20 +166,12 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
     }
 
     internal inner class GestureToMultiTouchAdapter {
-        private val controller = MultiTouchController()
+        private val controller = MultiTouchController(hasRotationLock)
 
         var isActive = false
 
         val normMatrix: Matrix
-            get() = controller.matrix.apply {
-                if(hasRotationLock) {
-                    val arr = FloatArray(9) {0f}
-                    this.getValues(arr)
-                    arr[1] = 0f
-                    arr[3] = 0f
-                    this.setValues(arr)
-                }
-            }
+            get() = controller.matrix
 
         fun down(event: MotionEvent) {
             val index = event.actionIndex

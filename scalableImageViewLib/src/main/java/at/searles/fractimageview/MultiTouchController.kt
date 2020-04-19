@@ -4,12 +4,14 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.util.Pair
 import java.util.*
+import kotlin.math.abs
 
 /**
  * This multitouch-controller allows to create a scale-event from
  * multiple gestures.
  */
-class MultiTouchController {
+class MultiTouchController(private val hasRotationLock: Boolean) {
+
     /**
      * Matrix contains index -> moved from, to-pairs since last change.
      */
@@ -92,10 +94,24 @@ class MultiTouchController {
         val ty = detTy / det
 
         return Matrix().apply {
-            setValues(floatArrayOf(
-                a, b, tx,
-                c, d, ty,
-                0f, 0f, 1f))
+            if(hasRotationLock) {
+                if(abs(a * d) > abs(b * c)) {
+                    setValues(floatArrayOf(
+                        a, 0f, tx,
+                        0f, d, ty,
+                        0f, 0f, 1f))
+                } else {
+                    setValues(floatArrayOf(
+                        0f, b, tx,
+                        c, 0f, ty,
+                        0f, 0f, 1f))
+                }
+            } else {
+                setValues(floatArrayOf(
+                    a, b, tx,
+                    c, d, ty,
+                    0f, 0f, 1f))
+            }
         }
     }
 
@@ -125,7 +141,15 @@ class MultiTouchController {
         val ty = q0y - r * p0y + s * p0x
 
         return Matrix().apply {
-            setValues(floatArrayOf(r, s, tx, -s, r, ty, 0f, 0f, 1f))
+            if(hasRotationLock) {
+                if(abs(s) > abs(r)) {
+                    setValues(floatArrayOf(0f, s, tx, -s, 0f, ty, 0f, 0f, 1f))
+                } else {
+                    setValues(floatArrayOf(r, 0f, tx, 0f, r, ty, 0f, 0f, 1f))
+                }
+            } else {
+                setValues(floatArrayOf(r, s, tx, -s, r, ty, 0f, 0f, 1f))
+            }
         }
     }
 
