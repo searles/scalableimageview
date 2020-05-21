@@ -3,17 +3,17 @@ package at.searles.fractimageview.plugins
 import android.graphics.Canvas
 import android.view.MotionEvent
 import at.searles.fractimageview.Plugin
-import at.searles.fractimageview.ScalableImageView
+import at.searles.fractimageview.PluginScalableImageView
 
 class GestureBlockPlugin: Plugin {
 
     override var isEnabled: Boolean = true
 
-    override fun onDraw(source: ScalableImageView, canvas: Canvas) {
+    override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
         // XXX maybe some icon?
     }
 
-    override fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean {
+    override fun onTouchEvent(source: PluginScalableImageView, event: MotionEvent): Boolean {
         return isEnabled
     }
 }

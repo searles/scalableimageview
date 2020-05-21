@@ -10,7 +10,10 @@ import kotlin.math.abs
  * This multitouch-controller allows to create a scale-event from
  * multiple gestures.
  */
-class MultiTouchController(private val hasRotationLock: Boolean) {
+class MultiTouchController(
+    private val hasRotationLock: Boolean,
+    private val hasCenterLock: Boolean
+) {
 
     /**
      * Matrix contains index -> moved from, to-pairs since last change.
@@ -88,10 +91,10 @@ class MultiTouchController(private val hasRotationLock: Boolean) {
 
         val a = detA / det
         val b = detB / det
-        val tx = detTx / det
+        val tx = if(hasCenterLock) 0f else (detTx / det)
         val c = detC / det
         val d = detD / det
-        val ty = detTy / det
+        val ty = if(hasCenterLock) 0f else (detTy / det)
 
         return Matrix().apply {
             if(hasRotationLock) {
@@ -137,8 +140,8 @@ class MultiTouchController(private val hasRotationLock: Boolean) {
         val r = detR / det
         val s = detS / det
 
-        val tx = q0x - r * p0x - s * p0y
-        val ty = q0y - r * p0y + s * p0x
+        val tx = if(hasCenterLock) 0f else (q0x - r * p0x - s * p0y)
+        val ty = if(hasCenterLock) 0f else (q0y - r * p0y + s * p0x)
 
         return Matrix().apply {
             if(hasRotationLock) {
@@ -154,8 +157,8 @@ class MultiTouchController(private val hasRotationLock: Boolean) {
     }
 
     private fun createMatrixFromGesture(pq: Pair<PointF, PointF>): Matrix {
-        val tx = pq.second.x - pq.first.x
-        val ty = pq.second.y - pq.first.y
+        val tx = if(hasCenterLock) 0f else (pq.second.x - pq.first.x)
+        val ty = if(hasCenterLock) 0f else (pq.second.y - pq.first.y)
 
         return Matrix().apply {
             setValues(floatArrayOf(1f, 0f, tx, 0f, 1f, ty, 0f, 0f, 1f))

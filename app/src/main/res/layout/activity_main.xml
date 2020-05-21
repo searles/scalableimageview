@@ -13,9 +13,10 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/rotationLockCheckBox"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/textView"
@@ -35,18 +36,27 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
-        android:text="Rotation Lock"
+        android:text="Rotation"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <CheckBox
+        android:id="@+id/centerLockCheckBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Center"
+        app:layout_constraintBottom_toBottomOf="@+id/rotationLockCheckBox"
+        app:layout_constraintStart_toEndOf="@+id/rotationLockCheckBox" />
 
     <CheckBox
         android:id="@+id/confirmZoomCheckBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Confirm Zoom"
+        android:text="Confirm"
         app:layout_constraintBottom_toBottomOf="@+id/rotationLockCheckBox"
-        app:layout_constraintStart_toEndOf="@+id/rotationLockCheckBox" />
+        app:layout_constraintStart_toEndOf="@+id/centerLockCheckBox" />
 
     <CheckBox
         android:id="@+id/isTouchEnabledCheckBox"
@@ -54,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Enable Touch"
+        android:text="Enabled"
         app:layout_constraintBottom_toBottomOf="@+id/confirmZoomCheckBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"

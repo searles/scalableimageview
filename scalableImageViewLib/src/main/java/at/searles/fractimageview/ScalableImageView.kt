@@ -25,6 +25,14 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
             field = value
         }
 
+    var hasCenterLock = false
+        set(value) {
+            cancelMultitouchGesture()
+            field = value
+        }
+
+    // TODO: Add method that normalizes coordinates but respects current scale matrix.
+
     /* Gesture control:
      * - scroll events are forwarded to a multitouch controller
      * - double tabs are zooms at the current position.
@@ -47,17 +55,18 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
     val scaleNormMatrix: Matrix
         get() = multitouchAdapter?.normMatrix ?: identityMatrix
 
+    val imageMatrix: Matrix
+        get() {
+            return ScalableBitmapViewUtils.bitmapInViewMatrix(
+                scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(),
+                width.toFloat(), height.toFloat(),
+                scalableBitmapModel.bitmapTransformMatrix, scaleNormMatrix
+            )
+        }
+
     override fun onDraw(canvas: Canvas) {
-        val scaleMatrix = multitouchAdapter?.normMatrix ?: identityMatrix
-
-        val matrix = ScalableBitmapViewUtils.bitmapInViewMatrix(
-            scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(),
-            width.toFloat(), height.toFloat(),
-            scalableBitmapModel.bitmapTransformMatrix, scaleMatrix
-        )
-
         // draw image
-        canvas.drawBitmap(scalableBitmapModel.bitmap, matrix, null)
+        canvas.drawBitmap(scalableBitmapModel.bitmap, imageMatrix, null)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -107,7 +116,12 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
     }
 
     private fun commitMultitouchGesture() {
-        scalableBitmapModel.scale(multitouchAdapter!!.normMatrix)
+        val scaleMatrix = multitouchAdapter!!.normMatrix
+
+        if(!scaleMatrix.isIdentity) {
+            scalableBitmapModel.scale(scaleMatrix)
+        }
+
         multitouchAdapter = null
         invalidate()
     }
@@ -156,7 +170,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
     }
 
     internal inner class GestureToMultiTouchAdapter {
-        private val controller = MultiTouchController(hasRotationLock)
+        private val controller = MultiTouchController(hasRotationLock, hasCenterLock)
 
         var isActive = false
 

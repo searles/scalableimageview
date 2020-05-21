@@ -8,15 +8,18 @@ import android.graphics.Paint
 import android.util.TypedValue
 import android.view.MotionEvent
 import at.searles.fractimageview.Plugin
+import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractimageview.ScalableBitmapViewUtils
 import at.searles.fractimageview.ScalableImageView
 import kotlin.math.min
 
+// TODO:
+// * Plugins: Must draw and have access to
 class GridPlugin(context: Context): Plugin {
 
     override var isEnabled: Boolean = true
 
-    override fun onDraw(source: ScalableImageView, canvas: Canvas) {
+    override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
         val vw = source.width.toFloat()
         val vh = source.height.toFloat()
         val bw = source.scalableBitmapModel.width.toFloat()
@@ -66,7 +69,7 @@ class GridPlugin(context: Context): Plugin {
         }
     }
 
-    override fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean = false
+    override fun onTouchEvent(source: PluginScalableImageView, event: MotionEvent): Boolean = false
 
     private fun dpToPx(dip: Float, resources: Resources): Float {
         return TypedValue.applyDimension(
@@ -112,6 +115,5 @@ class GridPlugin(context: Context): Plugin {
 
     companion object {
         private const val widthDp = 1f
-        private const val flippedIconSizeDp = 24f
     }
 }

@@ -11,7 +11,7 @@ import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractimageview.plugins.GestureBlockPlugin
 
 /**
- * This demo shows
+ * TODO: Center lock
  */
 class DemoActivity : AppCompatActivity() {
 
@@ -25,6 +25,10 @@ class DemoActivity : AppCompatActivity() {
 
     private val rotationLockCheckBox: CheckBox by lazy {
         findViewById<CheckBox>(R.id.rotationLockCheckBox)
+    }
+
+    private val centerLockCheckBox: CheckBox by lazy {
+        findViewById<CheckBox>(R.id.centerLockCheckBox)
     }
 
     private val confirmZoomCheckBox: CheckBox by lazy {
@@ -56,10 +60,12 @@ class DemoActivity : AppCompatActivity() {
 
         confirmZoomCheckBox.setOnClickListener { scalableImageView.mustConfirmZoom = confirmZoomCheckBox.isChecked }
         rotationLockCheckBox.setOnClickListener { scalableImageView.hasRotationLock = rotationLockCheckBox.isChecked }
+        centerLockCheckBox.setOnClickListener { scalableImageView.hasCenterLock = centerLockCheckBox.isChecked }
         isTouchEnabledCheckBox.setOnClickListener { touchBlocker.isEnabled = !isTouchEnabledCheckBox.isChecked }
 
         scalableImageView.mustConfirmZoom = confirmZoomCheckBox.isChecked
         scalableImageView.hasRotationLock = rotationLockCheckBox.isChecked
+        scalableImageView.hasCenterLock = centerLockCheckBox.isChecked
     }
 
     override fun onBackPressed() {

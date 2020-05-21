@@ -9,6 +9,17 @@ import android.view.MotionEvent
 class PluginScalableImageView(context: Context, attrs: AttributeSet) : ScalableImageView(context, attrs) {
     private val plugins = ArrayList<Plugin>()
 
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        if(!changed) {
+            return
+        }
+
+        super.onLayout(changed, left, top, right, bottom)
+        for (plugin in plugins) {
+            plugin.onLayoutChanged(this)
+        }
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 

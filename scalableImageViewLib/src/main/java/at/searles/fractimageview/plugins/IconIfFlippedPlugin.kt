@@ -6,9 +6,9 @@ import android.graphics.Canvas
 import android.util.TypedValue
 import android.view.MotionEvent
 import at.searles.fractimageview.Plugin
+import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractimageview.R
 import at.searles.fractimageview.ScalableBitmapViewUtils
-import at.searles.fractimageview.ScalableImageView
 
 class IconIfFlippedPlugin(context: Context): Plugin {
 
@@ -17,7 +17,7 @@ class IconIfFlippedPlugin(context: Context): Plugin {
     private val icon = context.resources.getDrawable(R.drawable.flipped_icon, null)
     private val iconSize = dpToPx(iconSizeDp, context.resources)
 
-    override fun onDraw(source: ScalableImageView, canvas: Canvas) {
+    override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
         val vw = source.width.toFloat()
         val vh = source.height.toFloat()
         val bw = source.scalableBitmapModel.width.toFloat()
@@ -32,7 +32,7 @@ class IconIfFlippedPlugin(context: Context): Plugin {
         }
     }
 
-    override fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean = false
+    override fun onTouchEvent(source: PluginScalableImageView, event: MotionEvent): Boolean = false
 
     private fun dpToPx(dip: Float, resources: Resources): Float {
         return TypedValue.applyDimension(

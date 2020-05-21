@@ -4,14 +4,14 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.MotionEvent
 import at.searles.fractimageview.Plugin
+import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractimageview.ScalableBitmapViewUtils
-import at.searles.fractimageview.ScalableImageView
 
 class DrawBitmapBoundsPlugin: Plugin {
 
     override var isEnabled: Boolean = true
 
-    override fun onDraw(source: ScalableImageView, canvas: Canvas) {
+    override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
         val vw = source.width.toFloat()
         val vh = source.height.toFloat()
 
@@ -50,7 +50,7 @@ class DrawBitmapBoundsPlugin: Plugin {
         ) // right
     }
 
-    override fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean = false
+    override fun onTouchEvent(source: PluginScalableImageView, event: MotionEvent): Boolean = false
 
     companion object {
         val boundsPaint = Paint().apply {

@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.view.MotionEvent
 import android.widget.TextView
 import at.searles.fractimageview.Plugin
+import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractimageview.ScalableBitmapViewUtils
 import at.searles.fractimageview.ScalableImageView
 
@@ -19,7 +20,7 @@ class DemoPlugin(private val tv: TextView):
     }
     override var isEnabled = true
 
-    override fun onDraw(source: ScalableImageView, canvas: Canvas) {
+    override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
         val corners = floatArrayOf(-1f, -1f, -1f, 1f, 1f, -1f)
 
         normToViewMatrix(source).mapPoints(corners)
@@ -29,7 +30,7 @@ class DemoPlugin(private val tv: TextView):
         canvas.drawLine(corners[4], corners[5], corners[0], corners[1], paint)
     }
 
-    override fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean {
+    override fun onTouchEvent(source: PluginScalableImageView, event: MotionEvent): Boolean {
         // show coordinates in norm-coordinates
         val matrix = viewToNormMatrix(source)
 
