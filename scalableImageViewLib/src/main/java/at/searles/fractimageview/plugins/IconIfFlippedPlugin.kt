@@ -8,7 +8,6 @@ import android.view.MotionEvent
 import at.searles.fractimageview.Plugin
 import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractimageview.R
-import at.searles.fractimageview.ScalableBitmapViewUtils
 
 class IconIfFlippedPlugin(context: Context): Plugin {
 
@@ -20,10 +19,8 @@ class IconIfFlippedPlugin(context: Context): Plugin {
     override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
         val vw = source.width.toFloat()
         val vh = source.height.toFloat()
-        val bw = source.scalableBitmapModel.width.toFloat()
-        val bh = source.scalableBitmapModel.height.toFloat()
 
-        if(ScalableBitmapViewUtils.isBitmapFlipped(bw, bh, vw, vh)) {
+        if(source.isBitmapFlipped) {
             icon.setBounds(
                 (vw - iconSize).toInt(), (vh - iconSize).toInt(),
                 vw.toInt(), vh.toInt())

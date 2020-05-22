@@ -8,7 +8,6 @@ import android.view.MotionEvent
 import android.widget.TextView
 import at.searles.fractimageview.Plugin
 import at.searles.fractimageview.PluginScalableImageView
-import at.searles.fractimageview.ScalableBitmapViewUtils
 import at.searles.fractimageview.ScalableImageView
 
 class DemoPlugin(private val tv: TextView):
@@ -43,25 +42,15 @@ class DemoPlugin(private val tv: TextView):
     }
 
     private fun normToViewMatrix(scalableImageView: ScalableImageView): Matrix {
-        val vw = scalableImageView.width.toFloat()
-        val vh = scalableImageView.height.toFloat()
-        val bw = scalableImageView.scalableBitmapModel.width.toFloat()
-        val bh = scalableImageView.scalableBitmapModel.height.toFloat()
+        val bw = scalableImageView.bitmapModel.width.toFloat()
+        val bh = scalableImageView.bitmapModel.height.toFloat()
 
         val matrix = Matrix(scalableImageView.scaleNormMatrix)
         matrix.postConcat(
-            ScalableBitmapViewUtils.normToBitmapMatrix(
-                bw,
-                bh
-            )
+            scalableImageView.bitmapModel.normToBitmapMatrix()
         )
         matrix.postConcat(
-            ScalableBitmapViewUtils.bitmapToViewMatrix(
-                bw,
-                bh,
-                vw,
-                vh
-            )
+            scalableImageView.bitmapToViewMatrix()
         )
 
         return matrix

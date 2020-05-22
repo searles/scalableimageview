@@ -5,7 +5,6 @@ import android.graphics.Paint
 import android.view.MotionEvent
 import at.searles.fractimageview.Plugin
 import at.searles.fractimageview.PluginScalableImageView
-import at.searles.fractimageview.ScalableBitmapViewUtils
 
 class DrawBitmapBoundsPlugin: Plugin {
 
@@ -15,25 +14,10 @@ class DrawBitmapBoundsPlugin: Plugin {
         val vw = source.width.toFloat()
         val vh = source.height.toFloat()
 
-        val bw = source.scalableBitmapModel.width.toFloat()
-        val bh = source.scalableBitmapModel.height.toFloat()
-
         val cx = vw / 2f
         val cy = vh / 2f
-        val sbw =
-            ScalableBitmapViewUtils.scaledBitmapWidth(
-                bw,
-                bh,
-                vw,
-                vh
-            )
-        val sbh =
-            ScalableBitmapViewUtils.scaledBitmapHeight(
-                bw,
-                bh,
-                vw,
-                vh
-            )
+        val sbw = source.scaledBitmapWidth
+        val sbh = source.scaledBitmapHeight
 
         // draw in total 4 transparent rectangles to indicate the drawing area
         canvas.drawRect(-1f, -1f, vw, cy - sbh / 2f,

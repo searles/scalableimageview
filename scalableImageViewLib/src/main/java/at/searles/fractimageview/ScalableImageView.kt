@@ -5,12 +5,14 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.PointF
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.View
-import at.searles.fractimageview.ScalableBitmapViewUtils.norm
+import kotlin.math.max
+import kotlin.math.min
 
 open class ScalableImageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     var hasRotationLock = false
@@ -48,7 +50,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
      */
     private var multitouchAdapter: GestureToMultiTouchAdapter? = null
 
-    lateinit var scalableBitmapModel: ScalableBitmapModel
+    lateinit var bitmapModel: ScalableBitmapModel
 
     private val identityMatrix = Matrix()
 
@@ -57,16 +59,14 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
 
     val imageMatrix: Matrix
         get() {
-            return ScalableBitmapViewUtils.bitmapInViewMatrix(
-                scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(),
-                width.toFloat(), height.toFloat(),
-                scalableBitmapModel.bitmapTransformMatrix, scaleNormMatrix
+            return bitmapInViewMatrix(
+                bitmapModel.bitmapTransformMatrix, scaleNormMatrix
             )
         }
 
     override fun onDraw(canvas: Canvas) {
         // draw image
-        canvas.drawBitmap(scalableBitmapModel.bitmap, imageMatrix, null)
+        canvas.drawBitmap(bitmapModel.bitmap, imageMatrix, null)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -119,7 +119,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
         val scaleMatrix = multitouchAdapter!!.normMatrix
 
         if(!scaleMatrix.isIdentity) {
-            scalableBitmapModel.scale(scaleMatrix)
+            bitmapModel.scale(scaleMatrix)
         }
 
         multitouchAdapter = null
@@ -142,9 +142,9 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
 
             val index = event.actionIndex
             val p = PointF(event.getX(index), event.getY(index))
-            val np = norm(p, scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(), width.toFloat(), height.toFloat())
+            val np = norm(p)
 
-            scalableBitmapModel.scale(ScalableBitmapViewUtils.scaleMatrix(np, dtScaleFactor))
+            bitmapModel.scale(scaleMatrix(np, dtScaleFactor))
 
             return true
         }
@@ -169,6 +169,157 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
         }
     }
 
+    fun bitmapToViewMatrix(ret: Matrix = Matrix()): Matrix {
+        val bw = bitmapModel.width.toFloat()
+        val bh = bitmapModel.height.toFloat()
+        val vw = width.toFloat()
+        val vh = height.toFloat()
+
+        require(bw > 0 && bh > 0 && vw > 0 && vh > 0)
+
+        val vr = RectF(0f, 0f, vw, vh)
+
+        // next must be coordinated with isBitmapFlipped.
+        val br = if (vw > vh) {
+            RectF(0f, 0f, max(bw, bh), min(bw, bh))
+        } else {
+            RectF(0f, 0f, min(bw, bh), max(bw, bh))
+        }
+
+        val m = ret.apply {
+            setRectToRect(br, vr, Matrix.ScaleToFit.CENTER)
+        }
+
+        // Check orientation
+        if (isBitmapFlipped) { // Turn centerImageMatrix by 90 degrees
+            m.preTranslate(bh, 0f)
+            m.preRotate(90f)
+        }
+
+        return m
+    }
+
+    val isBitmapFlipped: Boolean
+        get() {
+            val bw = bitmapModel.width
+            val bh = bitmapModel.height
+            val vw = width
+            val vh = height
+
+            // maximize filled area
+            return bw > bh && vw < vh || bw < bh && vw > vh
+        }
+
+    /**
+     * This returns the up-scaled length of the bitmap's edge towards the view's width.
+     */
+    val scaledBitmapWidth: Float
+        get () {
+            val bw = bitmapModel.width.toFloat()
+            val bh = bitmapModel.height.toFloat()
+            val vw = width.toFloat()
+            val vh = height.toFloat()
+
+            /* Just some thoughts:
+            The scaled rectangle of the bitmap should fit into the view.
+            So, the ratio is the min-ratio.
+             */
+            return if (isBitmapFlipped) {
+                val ratio = min(vw / bh, vh / bw)
+                bh * ratio
+            } else {
+                val ratio = min(vw / bw, vh / bh)
+                bw * ratio
+            }
+        }
+
+    val scaledBitmapHeight: Float
+        get() {
+            val bw = bitmapModel.width.toFloat()
+            val bh = bitmapModel.height.toFloat()
+            val vw = width.toFloat()
+            val vh = height.toFloat()
+
+            /* Just some thoughts:
+            The scaled rectangle of the bitmap should fit into the view.
+            So, the ratio is the min-ratio.
+             */
+            return if (isBitmapFlipped) {
+                val ratio = min(vw / bh, vh / bw)
+                bw * ratio
+            } else {
+                val ratio = min(vw / bw, vh / bh)
+                bh * ratio
+            }
+    }
+
+    /**
+     * Normalize view coordinates using the provided bitmap coordinates. This one
+     * takes care of isBitmapFlipped etc...
+     */
+    fun norm(p: PointF, ret: PointF = PointF()): PointF {
+        val vw = width.toFloat()
+        val vh = height.toFloat()
+
+        val m = min(scaledBitmapWidth, scaledBitmapHeight)
+
+        val x: Float
+        val y: Float
+
+        if(isBitmapFlipped) {
+            x = (p.y * 2f - vh) / m
+            y = (vw - p.x * 2f) / m
+        } else {
+            x = (p.x * 2f - vw) / m
+            y = (p.y * 2f - vh) / m
+        }
+
+        return ret.apply {
+            this.x = x
+            this.y = y
+        }
+    }
+
+    /**
+     * Normalize view coordinates using the provided bitmap coordinates. This one
+     * takes care of isBitmapFlipped etc...
+     */
+    fun invNorm(p: PointF, ret: PointF = PointF()): PointF {
+        val vw = width.toFloat()
+        val vh = height.toFloat()
+
+        val m = min(scaledBitmapWidth, scaledBitmapHeight)
+
+        val x: Float
+        val y: Float
+
+        if(isBitmapFlipped) {
+            y = (p.x * m + vh) / 2f
+            x = (vw - p.y * m) / 2f
+        } else {
+            x = (p.x * m + vw) / 2f
+            y = (p.y * m + vh) / 2f
+        }
+
+        return ret.apply {
+            this.x = x
+            this.y = y
+        }
+    }
+
+    fun bitmapInViewMatrix(bitmapNormMatrix: Matrix, scaleNormMatrix: Matrix, ret: Matrix = Matrix()): Matrix {
+        return ret.apply {
+            set(scaleNormMatrix)
+            preConcat(bitmapNormMatrix)
+
+            preConcat(bitmapModel.bitmapToNormMatrix())
+            postConcat(bitmapModel.normToBitmapMatrix())
+            postConcat(bitmapToViewMatrix())
+        }
+    }
+
+
+
     internal inner class GestureToMultiTouchAdapter {
         private val controller = MultiTouchController(hasRotationLock, hasCenterLock)
 
@@ -180,7 +331,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
         fun down(event: MotionEvent) {
             val index = event.actionIndex
             val id = event.getPointerId(index)
-            val pt = norm(PointF(event.getX(index), event.getY(index)), scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(), width.toFloat(), height.toFloat())
+            val pt = norm(PointF(event.getX(index), event.getY(index)))
 
             controller.pointDown(id, pt)
         }
@@ -194,7 +345,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
         fun scroll(event: MotionEvent) {
             isActive = true
             for (index in 0 until event.pointerCount) {
-                val pt = norm(PointF(event.getX(index), event.getY(index)), scalableBitmapModel.width.toFloat(), scalableBitmapModel.height.toFloat(), width.toFloat(), height.toFloat())
+                val pt = norm(PointF(event.getX(index), event.getY(index)))
                 val id = event.getPointerId(index)
                 controller.pointDrag(id, pt)
             }
@@ -208,5 +359,18 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
          * Scale factor on double tapping
          */
         const val dtScaleFactor = 3f
+
+        fun scaleMatrix(center: PointF, factor: Float, ret: Matrix = Matrix()): Matrix {
+            return ret.apply {
+                setValues(
+                    floatArrayOf(
+                        factor, 0f, center.x * (1 - factor),
+                        0f,
+                        factor, center.y * (1 - factor),
+                        0f, 0f, 1f
+                    )
+                )
+            }
+        }
     }
 }

@@ -9,8 +9,6 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import at.searles.fractimageview.Plugin
 import at.searles.fractimageview.PluginScalableImageView
-import at.searles.fractimageview.ScalableBitmapViewUtils
-import at.searles.fractimageview.ScalableImageView
 import kotlin.math.min
 
 // TODO:
@@ -22,25 +20,11 @@ class GridPlugin(context: Context): Plugin {
     override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
         val vw = source.width.toFloat()
         val vh = source.height.toFloat()
-        val bw = source.scalableBitmapModel.width.toFloat()
-        val bh = source.scalableBitmapModel.height.toFloat()
 
         val cx = vw / 2f
         val cy = vh / 2f
-        val sbw =
-            ScalableBitmapViewUtils.scaledBitmapWidth(
-                bw,
-                bh,
-                vw,
-                vh
-            )
-        val sbh =
-            ScalableBitmapViewUtils.scaledBitmapHeight(
-                bw,
-                bh,
-                vw,
-                vh
-            )
+        val sbw = source.scaledBitmapWidth
+        val sbh = source.scaledBitmapHeight
 
         val minLen = min(sbw, sbh) / 2f
 
