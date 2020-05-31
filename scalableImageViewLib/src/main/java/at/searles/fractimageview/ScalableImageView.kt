@@ -144,7 +144,7 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
             val p = PointF(event.getX(index), event.getY(index))
             val np = norm(p)
 
-            bitmapModel.scale(scaleMatrix(np, dtScaleFactor))
+            bitmapModel.scale(createScaleMatrix(np, dtScaleFactor, hasCenterLock))
 
             return true
         }
@@ -360,13 +360,12 @@ open class ScalableImageView(context: Context, attrs: AttributeSet) : View(conte
          */
         const val dtScaleFactor = 3f
 
-        fun scaleMatrix(center: PointF, factor: Float, ret: Matrix = Matrix()): Matrix {
+        fun createScaleMatrix(center: PointF, factor: Float, isCenterLock: Boolean, ret: Matrix = Matrix()): Matrix {
             return ret.apply {
                 setValues(
                     floatArrayOf(
-                        factor, 0f, center.x * (1 - factor),
-                        0f,
-                        factor, center.y * (1 - factor),
+                        factor, 0f, if(isCenterLock) 0f else center.x * (1 - factor),
+                        0f, factor, if(isCenterLock) 0f else center.y * (1 - factor),
                         0f, 0f, 1f
                     )
                 )
